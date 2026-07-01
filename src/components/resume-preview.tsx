@@ -53,7 +53,7 @@ export function ResumePreview() {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-white">
+    <div className="h-full overflow-y-auto bg-white preview-paper">
       {templateMap[selectedTemplate] || <ModernTemplate data={data} />}
     </div>
   );

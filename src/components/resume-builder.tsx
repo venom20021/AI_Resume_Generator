@@ -12,6 +12,7 @@ import { SkillsStep } from "@/components/steps/skills-step";
 import { OptimizeStep } from "@/components/steps/optimize-step";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   ChevronLeft,
   ChevronRight,
@@ -140,7 +141,7 @@ export function ResumeBuilder() {
       {/* Form Panel */}
       <div className="flex w-full flex-col border-r lg:w-[480px] xl:w-[540px]">
         {/* Step Navigation */}
-        <nav className="flex shrink-0 items-center border-b bg-muted/30 px-4 py-3">
+        <nav className="flex shrink-0 items-center justify-between border-b bg-muted/30 px-4 py-3">
           <div className="flex items-center gap-1">
             {steps.map((step, i) => (
               <div key={step.key} className="flex items-center">
@@ -161,11 +162,15 @@ export function ResumeBuilder() {
               </div>
             ))}
           </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="h-6 w-px bg-border" />
+            <ThemeToggle />
+          </div>
         </nav>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="mx-auto max-w-lg">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 form-scroll">
+          <div key={currentStep} className="mx-auto max-w-lg step-content">
             {currentStep === "personal" && <PersonalInfoStep />}
             {currentStep === "education" && <EducationStep />}
             {currentStep === "experience" && <ExperienceStep />}

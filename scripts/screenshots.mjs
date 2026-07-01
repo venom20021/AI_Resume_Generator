@@ -52,7 +52,7 @@ async function main() {
   const server = spawn("npm", ["run", "dev"], {
     stdio: "ignore",
     shell: true,
-    env: { ...process.env, OPENAI_API_KEY: "sk-placeholder" },
+    env: { ...process.env, GOOGLE_GENERATIVE_AI_API_KEY: "placeholder" },
   });
 
   try {

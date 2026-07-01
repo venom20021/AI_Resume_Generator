@@ -5,6 +5,8 @@ import {
   type ResumeData,
   type ResumeStep,
   type ResumeTemplate,
+  type ResumeSnapshot,
+  type JdHistoryEntry,
   createEmptyResumeData,
   generateId,
 } from "./types";
@@ -15,6 +17,8 @@ interface SavedState {
   data: ResumeData;
   currentStep: ResumeStep;
   selectedTemplate: ResumeTemplate;
+  resumeHistory?: ResumeSnapshot[];
+  jdHistory?: JdHistoryEntry[];
 }
 
 function loadState(): SavedState | null {
@@ -63,12 +67,21 @@ interface ResumeContextType {
   addSkillsBulk: (newSkills: { name: string; category: string; level: string }[]) => void;
   updateJobDescription: (index: number, value: string) => void;
   addJobDescription: () => void;
+  addJobDescriptionWithValue: (text: string) => void;
   removeJobDescription: (index: number) => void;
   currentStep: ResumeStep;
   setCurrentStep: (step: ResumeStep) => void;
   steps: { key: ResumeStep; label: string; icon: string }[];
   selectedTemplate: ResumeTemplate;
   setSelectedTemplate: (template: ResumeTemplate) => void;
+  // History features
+  resumeHistory: ResumeSnapshot[];
+  jdHistory: JdHistoryEntry[];
+  saveResumeSnapshot: (label: string) => void;
+  restoreResumeSnapshot: (id: string) => void;
+  deleteResumeSnapshot: (id: string) => void;
+  addToJdHistory: (text: string) => void;
+  removeFromJdHistory: (id: string) => void;
 }
 
 const steps: { key: ResumeStep; label: string; icon: string }[] = [
@@ -86,6 +99,8 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<ResumeData>(createEmptyResumeData());
   const [currentStep, setCurrentStep] = useState<ResumeStep>("personal");
   const [selectedTemplate, setSelectedTemplate] = useState<ResumeTemplate>("modern");
+  const [resumeHistory, setResumeHistory] = useState<ResumeSnapshot[]>([]);
+  const [jdHistory, setJdHistory] = useState<JdHistoryEntry[]>([]);
 
   // Restore saved state after hydration (useEffect runs client-only, so no
   // mismatch between server HTML and first client render).
@@ -96,14 +111,16 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
         setData(saved.data);
         setCurrentStep(saved.currentStep);
         setSelectedTemplate(saved.selectedTemplate);
+        if (saved.resumeHistory) setResumeHistory(saved.resumeHistory);
+        if (saved.jdHistory) setJdHistory(saved.jdHistory);
       });
     }
   }, []);
 
   // Auto-save to localStorage whenever state changes.
   useEffect(() => {
-    saveState({ data, currentStep, selectedTemplate });
-  }, [data, currentStep, selectedTemplate]);
+    saveState({ data, currentStep, selectedTemplate, resumeHistory, jdHistory });
+  }, [data, currentStep, selectedTemplate, resumeHistory, jdHistory]);
 
   const updatePersonalInfo = (field: string, value: string) => {
     setData((prev) => ({
@@ -252,6 +269,13 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const addJobDescriptionWithValue = (text: string) => {
+    setData((prev) => ({
+      ...prev,
+      jobDescriptions: [...prev.jobDescriptions, text],
+    }));
+  };
+
   const removeJobDescription = (index: number) => {
     setData((prev) => ({
       ...prev,
@@ -274,6 +298,49 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  // ── History features ──────────────────────────────────────────
+
+  const saveResumeSnapshot = (label: string) => {
+    const snapshot: ResumeSnapshot = {
+      id: generateId(),
+      timestamp: Date.now(),
+      label,
+      data: JSON.parse(JSON.stringify(data)), // deep clone
+    };
+    setResumeHistory((prev) => [snapshot, ...prev].slice(0, 20)); // keep last 20
+  };
+
+  const restoreResumeSnapshot = (id: string) => {
+    const snapshot = resumeHistory.find((s) => s.id === id);
+    if (snapshot) {
+      setData(JSON.parse(JSON.stringify(snapshot.data)));
+    }
+  };
+
+  const deleteResumeSnapshot = (id: string) => {
+    setResumeHistory((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const addToJdHistory = (text: string) => {
+    if (!text.trim()) return;
+    // Don't add duplicates (same text)
+    setJdHistory((prev) => {
+      const exists = prev.some((e) => e.text === text);
+      if (exists) return prev;
+      const entry: JdHistoryEntry = {
+        id: generateId(),
+        text,
+        label: text.slice(0, 60) + (text.length > 60 ? "..." : ""),
+        timestamp: Date.now(),
+      };
+      return [entry, ...prev].slice(0, 50); // keep last 50
+    });
+  };
+
+  const removeFromJdHistory = (id: string) => {
+    setJdHistory((prev) => prev.filter((e) => e.id !== id));
+  };
+
   return (
     <ResumeContext.Provider
       value={{
@@ -294,12 +361,20 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
         addSkillsBulk,
         updateJobDescription,
         addJobDescription,
+        addJobDescriptionWithValue,
         removeJobDescription,
         currentStep,
         setCurrentStep,
         steps,
         selectedTemplate,
         setSelectedTemplate,
+        resumeHistory,
+        jdHistory,
+        saveResumeSnapshot,
+        restoreResumeSnapshot,
+        deleteResumeSnapshot,
+        addToJdHistory,
+        removeFromJdHistory,
       }}
     >
       {children}

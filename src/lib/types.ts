@@ -48,6 +48,20 @@ export interface ResumeData {
 export type ResumeStep = "personal" | "education" | "experience" | "skills" | "optimize";
 export type ResumeTemplate = "modern" | "classic" | "minimal";
 
+export interface ResumeSnapshot {
+  id: string;
+  timestamp: number;
+  label: string;
+  data: ResumeData;
+}
+
+export interface JdHistoryEntry {
+  id: string;
+  text: string;
+  label: string;
+  timestamp: number;
+}
+
 export const SKILL_CATEGORIES = [
   "Languages",
   "Frameworks & Libraries",

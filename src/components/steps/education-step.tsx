@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useResume } from "@/lib/resume-context";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, GraduationCap } from "lucide-react";
 
 export function EducationStep() {
   const { data, addEducation, updateEducation, removeEducation } = useResume();
@@ -26,7 +26,10 @@ export function EducationStep() {
       </div>
 
       {data.education.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center group">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-muted/80">
+            <GraduationCap className="h-6 w-6 text-muted-foreground/60" />
+          </div>
           <p className="text-sm text-muted-foreground">
             No education entries yet. Click {'\u201C'}Add Education{'\u201D'} to get started.
           </p>
@@ -36,7 +39,7 @@ export function EducationStep() {
       {data.education.map((edu, index) => (
         <div
           key={edu.id}
-          className="relative rounded-lg border p-4 space-y-4"
+          className="relative rounded-lg border p-4 space-y-4 card-hover"
         >
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">

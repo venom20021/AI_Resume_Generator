@@ -349,3 +349,148 @@ describe("useResume - error boundary", () => {
     }).toThrow("useResume must be used within a ResumeProvider");
   });
 });
+
+describe("ResumeProvider - history features", () => {
+  it("saveResumeSnapshot creates a snapshot with a label", () => {
+    const { result } = renderResumeHook();
+
+    // Add some data first
+    act(() => {
+      result.current.updatePersonalInfo("fullName", "Jane Doe");
+    });
+
+    act(() => {
+      result.current.saveResumeSnapshot("Version 1");
+    });
+
+    expect(result.current.resumeHistory).toHaveLength(1);
+    expect(result.current.resumeHistory[0].label).toBe("Version 1");
+    expect(result.current.resumeHistory[0].data.personalInfo.fullName).toBe("Jane Doe");
+    expect(result.current.resumeHistory[0].id).toBeTruthy();
+    expect(result.current.resumeHistory[0].timestamp).toBeGreaterThan(0);
+  });
+
+  it("restoreResumeSnapshot restores data from a snapshot", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.updatePersonalInfo("fullName", "Original Name");
+    });
+
+    act(() => {
+      result.current.saveResumeSnapshot("Original version");
+    });
+
+    const snapshotId = result.current.resumeHistory[0].id;
+
+    // Change the name
+    act(() => {
+      result.current.updatePersonalInfo("fullName", "Changed Name");
+    });
+
+    expect(result.current.data.personalInfo.fullName).toBe("Changed Name");
+
+    // Restore snapshot
+    act(() => {
+      result.current.restoreResumeSnapshot(snapshotId);
+    });
+
+    expect(result.current.data.personalInfo.fullName).toBe("Original Name");
+  });
+
+  it("deleteResumeSnapshot removes a snapshot", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.saveResumeSnapshot("Snapshot 1");
+      result.current.saveResumeSnapshot("Snapshot 2");
+    });
+
+    expect(result.current.resumeHistory).toHaveLength(2);
+
+    const id = result.current.resumeHistory[0].id;
+
+    act(() => {
+      result.current.deleteResumeSnapshot(id);
+    });
+
+    expect(result.current.resumeHistory).toHaveLength(1);
+    expect(result.current.resumeHistory[0].id).not.toBe(id);
+  });
+
+  it("addToJdHistory adds a JD entry", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.addToJdHistory("Senior Software Engineer at Google");
+    });
+
+    expect(result.current.jdHistory).toHaveLength(1);
+    expect(result.current.jdHistory[0].text).toBe("Senior Software Engineer at Google");
+    expect(result.current.jdHistory[0].id).toBeTruthy();
+    expect(result.current.jdHistory[0].timestamp).toBeGreaterThan(0);
+  });
+
+  it("addToJdHistory does not add duplicate text", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.addToJdHistory("Unique JD text");
+      result.current.addToJdHistory("Unique JD text");
+    });
+
+    expect(result.current.jdHistory).toHaveLength(1);
+  });
+
+  it("addToJdHistory ignores empty text", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.addToJdHistory("");
+      result.current.addToJdHistory("   ");
+    });
+
+    expect(result.current.jdHistory).toHaveLength(0);
+  });
+
+  it("removeFromJdHistory removes a JD entry", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.addToJdHistory("Job at Google");
+      result.current.addToJdHistory("Job at Meta");
+    });
+
+    expect(result.current.jdHistory).toHaveLength(2);
+
+    const id = result.current.jdHistory[0].id;
+
+    act(() => {
+      result.current.removeFromJdHistory(id);
+    });
+
+    expect(result.current.jdHistory).toHaveLength(1);
+    expect(result.current.jdHistory[0].id).not.toBe(id);
+  });
+
+  it("saveResumeSnapshot deep-clones data (mutating original doesn't affect snapshot)", () => {
+    const { result } = renderResumeHook();
+
+    act(() => {
+      result.current.updatePersonalInfo("fullName", "Original");
+    });
+
+    act(() => {
+      result.current.saveResumeSnapshot("Snapshot");
+    });
+
+    // Mutate current data
+    act(() => {
+      result.current.updatePersonalInfo("fullName", "Mutated");
+    });
+
+    // Snapshot should still have "Original"
+    expect(result.current.resumeHistory[0].data.personalInfo.fullName).toBe("Original");
+    expect(result.current.data.personalInfo.fullName).toBe("Mutated");
+  });
+});

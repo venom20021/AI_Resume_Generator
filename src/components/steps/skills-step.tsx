@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useResume } from "@/lib/resume-context";
 import { SKILL_CATEGORIES, SKILL_LEVELS } from "@/lib/types";
-import { Plus, Trash2, Sparkles, Loader2 } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, Wrench } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -84,7 +84,7 @@ export function SkillsStep() {
       </div>
 
       {/* AI Skill Suggestion */}
-      <div className="rounded-lg border bg-muted/20 p-4 space-y-3">
+      <div className="rounded-lg border p-4 space-y-3 glass-card">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium">AI Skill Suggestions</span>
@@ -118,7 +118,10 @@ export function SkillsStep() {
       </div>
 
       {data.skills.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center group">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-muted/80">
+            <Wrench className="h-6 w-6 text-muted-foreground/60" />
+          </div>
           <p className="text-sm text-muted-foreground">
             No skills added yet. Use AI suggestions above or click {'\u201C'}Add Skill{'\u201D'}
             to get started.
@@ -139,7 +142,7 @@ export function SkillsStep() {
                   <Badge
                     key={skill.id}
                     variant="secondary"
-                    className={levelColor(skill.level)}
+                    className={levelColor(skill.level) + " skill-badge"}
                   >
                     {skill.name}
                   </Badge>

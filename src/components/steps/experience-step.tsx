@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useResume } from "@/lib/resume-context";
-import { Plus, Trash2, Sparkles, Loader2, X } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, X, Briefcase } from "lucide-react";
 import { useState } from "react";
 
 function BulletPointInput({
@@ -126,7 +126,10 @@ export function ExperienceStep() {
       </div>
 
       {data.experience.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center group">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-muted/80">
+            <Briefcase className="h-6 w-6 text-muted-foreground/60" />
+          </div>
           <p className="text-sm text-muted-foreground">
             No experience entries yet. Click {'\u201C'}Add Experience{'\u201D'} to get started.
           </p>
@@ -134,7 +137,7 @@ export function ExperienceStep() {
       )}
 
       {data.experience.map((exp, index) => (
-        <div key={exp.id} className="relative rounded-lg border p-4 space-y-4">
+        <div key={exp.id} className="relative rounded-lg border p-4 space-y-4 card-hover">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">
               #{index + 1}
