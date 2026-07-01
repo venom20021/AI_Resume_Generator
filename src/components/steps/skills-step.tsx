@@ -41,7 +41,7 @@ export function SkillsStep() {
       }
     } catch (error) {
       console.error("Failed to suggest skills:", error);
-      toast.error("Failed to get AI suggestions. Check your API key.");
+      toast.error("Failed to get AI suggestions. Check your API key or try again.");
     } finally {
       setIsSuggesting(false);
     }
@@ -120,7 +120,7 @@ export function SkillsStep() {
       {data.skills.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <p className="text-sm text-muted-foreground">
-            No skills added yet. Use AI suggestions above or click "Add Skill"
+            No skills added yet. Use AI suggestions above or click {'\u201C'}Add Skill{'\u201D'}
             to get started.
           </p>
         </div>
@@ -151,7 +151,7 @@ export function SkillsStep() {
 
       {/* Skill input list */}
       <div className="space-y-3">
-        {data.skills.map((skill, _index) => (
+        {data.skills.map((skill) => (
           <div
             key={skill.id}
             className="flex flex-wrap items-end gap-3 rounded-lg border p-3"

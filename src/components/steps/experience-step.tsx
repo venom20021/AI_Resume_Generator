@@ -10,14 +10,10 @@ import { useState } from "react";
 
 function BulletPointInput({
   value,
-  index,
-  expId,
   onChange,
   onRemove,
 }: {
   value: string;
-  index: number;
-  expId: string;
   onChange: (value: string) => void;
   onRemove: () => void;
 }) {
@@ -132,7 +128,7 @@ export function ExperienceStep() {
       {data.experience.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <p className="text-sm text-muted-foreground">
-            No experience entries yet. Click "Add Experience" to get started.
+            No experience entries yet. Click {'\u201C'}Add Experience{'\u201D'} to get started.
           </p>
         </div>
       )}
@@ -249,8 +245,6 @@ export function ExperienceStep() {
               <BulletPointInput
                 key={bIndex}
                 value={bullet}
-                index={bIndex}
-                expId={exp.id}
                 onChange={(value) => updateBullet(exp.id, bIndex, value)}
                 onRemove={() => removeBullet(exp.id, bIndex)}
               />

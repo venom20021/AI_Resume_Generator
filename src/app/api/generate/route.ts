@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 
 export const maxDuration = 30;
 
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
     }
 
     const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-2.0-flash"),
       system: systemPrompt,
       prompt: userPrompt,
       temperature: 0.7,

@@ -1,8 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { ResumeProvider, useResume } from "../resume-context";
 import type { ResumeData } from "../types";
 import { createEmptyResumeData } from "../types";
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 // Helper to render the hook within the provider
 function renderResumeHook() {
@@ -31,12 +35,13 @@ describe("ResumeProvider - initial state", () => {
 
   it("provides the correct number of steps", () => {
     const { result } = renderResumeHook();
-    expect(result.current.steps).toHaveLength(4);
+    expect(result.current.steps).toHaveLength(5);
     expect(result.current.steps.map((s) => s.key)).toEqual([
       "personal",
       "education",
       "experience",
       "skills",
+      "optimize",
     ]);
   });
 });
@@ -302,6 +307,7 @@ describe("ResumeProvider - importData", () => {
       education: [],
       experience: [],
       skills: [],
+      jobDescriptions: [],
     };
 
     act(() => {

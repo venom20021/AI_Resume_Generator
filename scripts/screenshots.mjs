@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import { spawn } from "child_process";
 import path from "path";
+import fs from "fs";
 
 const SCREENSHOTS_DIR = path.resolve("public/screenshots");
 const BASE_URL = "http://localhost:3000";
@@ -155,8 +156,8 @@ async function main() {
     const files = ["empty-state.png", "personal-info.png", "experience-step.png", "job-match.png", "classic-template.png", "minimal-template.png"];
     for (const f of files) {
       const p = path.join(SCREENSHOTS_DIR, f);
-      const exists = require("fs").existsSync(p);
-      const size = exists ? require("fs").statSync(p).size : 0;
+      const exists = fs.existsSync(p);
+      const size = exists ? fs.statSync(p).size : 0;
       console.log(`  ${f}: ${exists ? (size / 1024).toFixed(1) + " KB" : "MISSING"}`);
     }
   } finally {

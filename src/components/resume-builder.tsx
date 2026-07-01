@@ -12,7 +12,6 @@ import { SkillsStep } from "@/components/steps/skills-step";
 import { OptimizeStep } from "@/components/steps/optimize-step";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { ResumeTemplate } from "@/lib/types";
 import {
   ChevronLeft,
   ChevronRight,
@@ -147,14 +146,11 @@ export function ResumeBuilder() {
               <div key={step.key} className="flex items-center">
                 <button
                   onClick={() => setCurrentStep(step.key)}
-                  className={`
-                    flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors
-                    ${
-                      currentStep === step.key
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }
-                  `}
+                  className={"flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors " + (
+                    currentStep === step.key
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
                 >
                   {stepIcons[step.key]}
                   <span className="hidden sm:inline">{step.label}</span>

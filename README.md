@@ -5,7 +5,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?logo=openai)
+![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.0%20Flash-4285F4?logo=google)
 ![Vercel](https://img.shields.io/badge/Vercel-Ready-000?logo=vercel)
 
 ---
@@ -82,7 +82,7 @@ Paste a job description and let AI rewrite your resume to match the role. Your s
 | **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
-| **AI** | [Vercel AI SDK v7](https://sdk.vercel.ai/) + OpenAI GPT-4o-mini |
+| **AI** | [Vercel AI SDK v7](https://sdk.vercel.ai/) + Google Gemini 2.0 Flash |
 | **PDF** | [@react-pdf/renderer](https://react-pdf.org/) (server-side) |
 | **Icons** | [Lucide](https://lucide.dev/) |
 | **Notifications** | [Sonner](https://sonner.emilkowal.ski/) |
@@ -95,7 +95,7 @@ Paste a job description and let AI rewrite your resume to match the role. Your s
 
 ### Prerequisites
 - Node.js 18+ and npm
-- An [OpenAI API key](https://platform.openai.com/api-keys)
+- A [Google Gemini API key](https://aistudio.google.com/apikey) (free tier available)
 
 ### Local Development
 
@@ -109,7 +109,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Edit .env.local and add your OPENAI_API_KEY
+# Edit .env.local and add your GOOGLE_GENERATIVE_AI_API_KEY
 
 # Start the development server
 npm run dev
@@ -184,7 +184,7 @@ The project is pre-configured for Vercel deployment with optimized serverless fu
 
 3. **Set environment variables**:
    - In Vercel Project Settings → Environment Variables
-   - Add `OPENAI_API_KEY` with your OpenAI API key
+   - Add `GOOGLE_GENERATIVE_AI_API_KEY` with your Google Gemini API key
 
 4. **Deploy**: Vercel will build and deploy automatically on each push
 

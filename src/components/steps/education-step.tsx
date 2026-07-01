@@ -28,7 +28,7 @@ export function EducationStep() {
       {data.education.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
           <p className="text-sm text-muted-foreground">
-            No education entries yet. Click "Add Education" to get started.
+            No education entries yet. Click {'\u201C'}Add Education{'\u201D'} to get started.
           </p>
         </div>
       )}

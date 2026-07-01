@@ -75,7 +75,7 @@ export function OptimizeStep() {
         toast.error("Failed to optimize resume. Try again.");
       }
     } catch {
-      toast.error("Failed to optimize resume. Check your API key.");
+      toast.error("Failed to optimize resume. Check your API key or try again.");
     } finally {
       setOptimizingIndex(null);
     }

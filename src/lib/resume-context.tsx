@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, startTransition, type ReactNode } from "react";
 import {
   type ResumeData,
   type ResumeStep,
@@ -8,6 +8,38 @@ import {
   createEmptyResumeData,
   generateId,
 } from "./types";
+
+const STORAGE_KEY = "resume-builder-state";
+
+interface SavedState {
+  data: ResumeData;
+  currentStep: ResumeStep;
+  selectedTemplate: ResumeTemplate;
+}
+
+function loadState(): SavedState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.data || !parsed.currentStep || !parsed.selectedTemplate) {
+      return null;
+    }
+    return parsed as SavedState;
+  } catch {
+    return null;
+  }
+}
+
+function saveState(state: SavedState): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // localStorage might be full or unavailable
+  }
+}
 
 interface ResumeContextType {
   data: ResumeData;
@@ -50,9 +82,28 @@ const steps: { key: ResumeStep; label: string; icon: string }[] = [
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 export function ResumeProvider({ children }: { children: ReactNode }) {
+  // Always start with empty defaults so server and client render match.
   const [data, setData] = useState<ResumeData>(createEmptyResumeData());
   const [currentStep, setCurrentStep] = useState<ResumeStep>("personal");
   const [selectedTemplate, setSelectedTemplate] = useState<ResumeTemplate>("modern");
+
+  // Restore saved state after hydration (useEffect runs client-only, so no
+  // mismatch between server HTML and first client render).
+  useEffect(() => {
+    const saved = loadState();
+    if (saved) {
+      startTransition(() => {
+        setData(saved.data);
+        setCurrentStep(saved.currentStep);
+        setSelectedTemplate(saved.selectedTemplate);
+      });
+    }
+  }, []);
+
+  // Auto-save to localStorage whenever state changes.
+  useEffect(() => {
+    saveState({ data, currentStep, selectedTemplate });
+  }, [data, currentStep, selectedTemplate]);
 
   const updatePersonalInfo = (field: string, value: string) => {
     setData((prev) => ({
